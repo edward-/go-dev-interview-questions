@@ -1,4 +1,7 @@
-[Ref: Backend-NodeJS-Golang-Interview_QA](https://github.com/Gauthamjm007/Backend-NodeJS-Golang-Interview_QA?tab=readme-ov-file#table-of-contents---golang)
+<img src="https://s3.amazonaws.com/knowt.com/images/knowt-logo.png" alt="drawing" width="200"/>
+
+[Golang interview questions flashcards](https://knowt.com/flashcards/0470a5c3-cf45-4c7b-87af-fdb557d2e74b)
+
 ### Table of Contents - Golang
 
 | No. | Questions |
@@ -38,6 +41,11 @@
 | 32 | [What is the easiest way to check if a slice is empty?](#what-is-the-easiest-way-to-check-if-a-slice-is-empty)
 | 33 | [What is an advantage of Go evaluating implicit types at compile time?](#what-is-an-advantage-of-go-evaluating-implicit-types-at-compile-time)
 | 34 | [What is Escape Analysis in Go?](#what-is-escape-analysis-in-go)
+| 35 | [Example of gorutine and channel](#example-of-gorutine-and-channel)
+
+<br/>
+
+[ref: Backend-NodeJS-Golang-Interview_QA](https://github.com/Gauthamjm007/Backend-NodeJS-Golang-Interview_QA?tab=readme-ov-file#table-of-contents---golang)
 
 
 1. ### What is Golang?
@@ -496,3 +504,35 @@
       Go’s compiler and runtime employ a technique known as escape analysis to determine whether a variable needs to escape from the current function scope. Variables that do not escape (stay within the function scope) are more likely to be stack-allocated, while variables that escape (are passed to other functions, returned, or stored in global variables) are more likely to be heap-allocated. Escape analysis helps optimize memory usage and minimize the overhead of garbage collection.
 
   **[ ⬆ ](#table-of-contents---golang)**  
+
+  35. ### Example of gorutine and channel
+
+      example:
+      ```go
+      package main
+
+      import "fmt"
+
+      func reverseString(s string, c chan string) {
+        r := ""
+        for _, value := range s {
+          r = string(value) + r
+        }
+        c <- r // send new string to c
+      }
+
+      func main() {
+        s := "hello world"
+        p := "new string"
+
+        c := make(chan string)
+        go reverseString(s, c)
+        go reverseString(p, c)
+        result1, result2 := <-c, <-c // receive from c
+
+        close(c)
+
+        fmt.Println(result1)
+        fmt.Println(result2)
+      }
+      ```
