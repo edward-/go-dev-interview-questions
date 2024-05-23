@@ -141,7 +141,7 @@
 	```
 
 
-  **[ Back to Top ⬆ ](#table-of-contents---golang)**    
+  **[ ⬆ ](#table-of-contents---golang)**    
 
 
 9. ### What is a GOPATH?
@@ -180,9 +180,18 @@
 
 13. ### How does a go compiler work?
    
-    A Go compiler goes through the following steps , they are in brief , if we go in detail then you will need a complete book to understand each module, for interview purpose , I have attached a hand written note , I will generate a digital form soon 
+	The process involves several stages, including lexical analysis, parsing, semantic analysis, optimization, and code generation. Here’s a simplified overview of how a Go compiler works:
 
-    ![go compiler](/img/go_compiler.jpeg)
+    ![go compiler](assets/go_compiler.jpeg)
+
+	1. **Lexical Analysis** The first step is to break down the source code into tokens. This process is called lexical analysis or scanning. The compiler identifies keywords, identifiers, literals, operators, and other language elements and converts them into tokens. It discards whitespace and comments, as they are not needed for further processing.
+	2. **Parsing** The compiler then performs parsing, which involves analyzing the structure of the code to create a parse tree or an abstract syntax tree (AST). The parse tree represents the syntactic structure of the program, showing how different language elements are related.
+	3. **Semantic Analysis** The compiler performs semantic analysis on the parse tree to check for errors and ensure that the code adheres to the language’s rules. It verifies variable declarations, types, scope rules, and other semantic aspects of the code.
+	4. **Intermediate Representation(IR)** After semantic analysis, the compiler generates an intermediate representation (IR) of the code. This is an abstract, platform-independent representation of the program. Now the outcome of the IR Process are 1. Dead Code elimination. 2. Function Call Inline. 3. Devirtualize functions. 4. Escape Analysis
+	5. **Static Single Assignment(SSA)** The compiler performs various optimizations on the intermediate representation to improve the efficiency of the generated machine code. Common optimizations include constant folding, loop optimization, and dead code elimination.
+	6. **Code Generation** The optimized intermediate representation is then translated into machine code for the target platform. The compiler generates assembly code or directly produces machine code, depending on the target architecture.
+	7. **Linking** If the program consists of multiple source files or external libraries, a linker combines the generated machine code into a single executable file. It resolves references between different parts of the program and produces a complete executable binary.
+	8. **Execution** The final executable can be run on the target machine, executing the logic specified in the original Go source code.
 
   **[ ⬆ ](#table-of-contents---golang)**   
 
@@ -240,23 +249,22 @@
 
 
   15. ### What are concurrency and parralism and what is the difference between both?
-   
-    **Concurrency** :  
-    Defination 1 : Dealing with multiple things at once. <br/>
-    Defination 2 : A Composition of independently executing processes(Example: suppose there are two tasks A and B , the way this work is A task done 70% meanwhile it has to wait for something , so it picks up task B and try to complete if suppose B task has to wait at 60% , for something then it picks up A task them completes it and comes back to B )    
 
-    **Parralism** : 
-     Defination 1 : Parallelism is about doing lots of things at once. <br/>
-     Defination 2 : It is the simultaneous execution of (possibly related) computations. (Example: suppose there are two tasks A and B , it takes both tasks and try to complete both together )
+		**Concurrency** means that an application is making progress on more than one task at the same time (concurrently). Well, if the computer only has one CPU the application may not make progress on more than one task at exactly the same time, but more than one task is being processed at a time inside the application. It does not completely finish one task before it begins the next. 
 
-    ![cocurrency_parllel](/img/cocurrency_parllel.jpg)
+		**Parallelism** means that an application splits its tasks up into smaller subtasks which can be processed in parallel, for instance on multiple CPUs at the exact same time.
+
+		Parallelism does not require two tasks to exist. It literally physically run parts of tasks OR multiple tasks, at the same time using the multi-core infrastructure of CPU, by assigning one core to each task or sub-task.
+
+
+		<img src="assets/concurrency_parallelism.jpg" alt="concurrency_parallelism" width="500"/>
  
   **[ ⬆ ](#table-of-contents---golang)**   
 
   16. ### What are the difference between goroutines and threads?
-      **Threads** : A thread is just a sequence of instructions that can be executed independently by a processor. Threads  use a lot of memory due to their large stack and requires call to OS for resources (such as memory) which is slow. so doesn’t always guarantee a better performance than processes in this multi-core processor world.
+      **Threads**: A thread is just a sequence of instructions that can be executed independently by a processor. Threads  use a lot of memory due to their large stack and requires call to OS for resources (such as memory) which is slow. so doesn’t always guarantee a better performance than processes in this multi-core processor world.
 
-      **Goroutines**:Goroutines exists only in the virtual space of go runtime and not in the OS. and A goroutine is created with initial only 2KB of stack size. Each function in go already has a check if more stack is needed or not and the stack can be copied to another region in memory with twice the original size. This makes goroutine very light on resources.
+      **Goroutines** exists only in the virtual space of go runtime and not in the OS. and A goroutine is created with initial only 2KB of stack size. Each function in go already has a check if more stack is needed or not and the stack can be copied to another region in memory with twice the original size. This makes goroutine very light on resources.
    
   **[ ⬆ ](#table-of-contents---golang)**   
 
@@ -275,7 +283,16 @@
 
   19. ### What is a Closure?
     
-         A closure is a function value that references variables from outside its body. The function may access and assign to the referenced variables.<br/>
+		A closure is a function value that references variables from outside its body. The function may access and assign to the referenced variables.<br/>
+
+		```go
+			message := "hello world"
+			printMessageFunc := func(message string) { 
+				fmt.Println(message) 
+			}
+			printMessageFunc(message) 
+		```
+				
    
   **[ ⬆ ](#table-of-contents---golang)**   
 
@@ -350,66 +367,27 @@
 
   23. ### How would you determine the type of a variable and Which package to use for it?
       
-      There are three different ways to find type of variable in Golang<br/>
-       * **reflect.TypeOf Function**: Using the golang inbuilt package reflect we can find the Type of variable
-            
-            ```go
-			    package main
-  
-             
-                import (
-                    "fmt"
-                    "reflect"
-                )
-
-                func main(){
-                var string_type =  "Hello Go";
-                var complex_type =  complex(9, 15);
-                
-                 fmt.Println("string_type", reflect.TypeOf(string_type))
-                 fmt.Println("complex_type = ", reflect.TypeOf(complex_type))
-                }
+		There are three different ways to find type of variable in Golang<br/>
+		* **reflect.TypeOf Function**: Using the golang inbuilt package reflect we can find the Type of variable
+					
+			```go
+			string_type := "hello"
+			fmt.Println("string_type", reflect.TypeOf(string_type))    
 			```
-        * **reflect.ValueOf.Kind() Function** : Using the golang inbuilt package reflect we can find the Type of variable
+		* **reflect.ValueOf.Kind() Function** : Using the golang inbuilt package reflect we can find the Type of variable
 
-             ```go
-			    package main
-  
-              
-                import (
-                    "fmt"
-                    "reflect"
-                )
-
-                func main(){
-                var string_type =  "Hello Go";
-                var complex_type =  complex(9, 15);
-                
-                 fmt.Println("string_type", reflect.ValueOf(string_type).Kind())
-                 fmt.Println("complex_type = ", reflect.TypeOf(complex_type).Kind())
-                }
+			```go
+			var string_type =  "Hello Go";
+			fmt.Println("string_type", reflect.ValueOf(string_type).Kind())
 			```
-        * **%T with Printf** : You can use Printf also to find value of variable
+		* **%T with Printf** : You can use Printf also to find value of variable
 
-            ```go
-			    package main
-  
-             
-                import (
-                    "fmt"
-                    "reflect"
-                )
-
-                func main(){
-                var string_type =  "Hello Go";
-                var complex_type =  complex(9, 15);
-                
-                 fmt.Printf("string_type=%T\n", string_type)
-                 fmt.Printf("complex_type =%T\n", complex_type)
-                }
+			```go
+			var string_type =  "Hello Go";
+			fmt.Printf("string_type=%T\n", string_type)
 			```
-      
-      **[ ⬆ ](#table-of-contents---golang)**   
+		
+		**[ ⬆ ](#table-of-contents---golang)**   
 
 
   24. ### What all types can map store?
@@ -457,25 +435,22 @@
 
       1. **Mark Phase**
 
-      * The GC starts by identifying all "live" objects. These are objects that are still reachable by your program's running code.
-      * It achieves this by traversing the program's memory structures, starting from the goroutines and their stacks. Any object reachable from these starting points is marked as live.
-      * Data structures like slices, maps, and channels that reference other objects also get marked during this traversal.
+      The GC starts by identifying all "live" objects. These are objects that are still reachable by your program's running code. It achieves this by traversing the program's memory structures, starting from the goroutines and their stacks. Any object reachable from these starting points is marked as live. Data structures like slices, maps, and channels that reference other objects also get marked during this traversal.
 
       2. **Sweep Phase**
 
-      * Once the marking phase is complete, the GC knows which objects are actively being used.
-      * It then sweeps through the entire heap memory. Any memory location that is not marked as live is considered garbage and is reclaimed.
-      * This reclaimed memory becomes available for future object allocations.
+      Once the marking phase is complete, the GC knows which objects are actively being used. It then sweeps through the entire heap memory. Any memory location that is not marked as live is considered garbage and is reclaimed. This reclaimed memory becomes available for future object allocations.
       
-      **Triggers for GC Cycle**
+      3. **Triggers for GC Cycle**
 
-      The GC cycle doesn't run on a fixed schedule. Instead, it's triggered dynamically based on the heap size. A key factor is the heap growth ratio, controlled by the environment variable GOGC. By default, it's set to 100. When the heap size reaches twice the size it was at the end of the previous GC cycle (100% growth), a new GC cycle is initiated.Adjusting GOGC allows you to fine-tune the balance between GC overhead and memory usage. A higher value allows the heap to grow larger before triggering GC, but it might also lead to more memory fragmentation.<br/>
+      The GC cycle doesn't run on a fixed schedule. Instead, it's triggered dynamically based on the heap size. A key factor is the heap growth ratio, controlled by the environment variable GOGC. By default, it's set to 100. When the heap size reaches twice the size it was at the end of the previous GC cycle (100% growth), a new GC cycle is initiated.<br/><br/>
+			Adjusting GOGC allows you to fine-tune the balance between GC overhead and memory usage. A higher value allows the heap to grow larger before triggering GC, but it might also lead to more memory fragmentation.<br/>
 
       **[ ⬆ ](#table-of-contents---golang)**   
 
   28. ### Difference between Compile time and runtime?
-      **Compile-time** is the time at which the source code is converted into an executable code <br/>
-      **Run time** is the time at which the executable code is started running.
+      **Compiletime** is the time at which the source code is converted into an executable code <br/>
+      **Runtime** is the time at which the executable code is started running.
 
   **[ ⬆ ](#table-of-contents---golang)**  
 
@@ -484,17 +459,9 @@
       The default number generator is deterministic, so it’ll produce the same sequence of numbers each time by default , so you need to seed it with different number you can do it with nano seconds like below <br/>
       
          ```go
-	     package main
-        import (
-            "fmt"
-            "math/rand"
-             "time"
-            )
-        func main(){
         s1 := rand.NewSource(time.Now().UnixNano())
         r1 := rand.New(s1)
-         fmt.Print(r1.Intn(100))
-         }
+        fmt.Print(r1.Intn(100))
 	     ```
 
   **[ ⬆ ](#table-of-contents---golang)**  
